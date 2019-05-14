@@ -2,7 +2,9 @@
 
     <div class="content">
       <div class="timer">
-        <span>{{currentTime}}</span>
+        <p>Время на ответ:</p>
+        <p class="num">{{currentTime}}</p>
+        <p> cек.</p>
       </div>
       <h2>Уровень {{currentLevel + 1}}</h2>
       <h3>{{val1}} + {{val2}} = ?</h3>
@@ -18,7 +20,7 @@
     props: ['currentLevel', 'answersCount', 'valueMin', 'valueMax'],
     data () {
       return {
-        currentTime: 10,
+        currentTime: 15,                 //время на ответ
         timer: null,
         answerAll: [],                   //числа для вариантов ответов
         val1: this.randomInteger( this.valueMin, this.valueMax ),
@@ -32,7 +34,7 @@
             rand = Math.floor(rand);
         return rand;
       },
-      userAns(val){                   //отправка в app.vue варианта ответа
+      userAns(val){                     //отправка в app.vue варианта ответа
         if ( val === this.result ) {
           this.$emit('level', {correct: true} );
         } else {
@@ -60,6 +62,7 @@
         if (time === 0) {
           this.stopTimer();
           // this.$emit('addTime');
+          this.$emit('level', {correct: false} );
         }
       }
     },
@@ -75,7 +78,6 @@
             if ( arr.indexOf( randomVal ) === -1)
               arr.push( randomVal );
           }
-        console.log( arr );
         function compareRandom( a, b ) {
           return Math.random() - 0.5;
         }
@@ -91,13 +93,17 @@
 
 <style scoped>
   .timer {
-    width: 100%;
+    width: 90%;
     justify-content: flex-end;
+    display: flex;
   }
-  span{
+  p {
     display: block;
     font-weight: bold;
     font-size: 24px;
+  }
+  .num{
+    padding: 0 10px;
     color: limegreen;
   }
 

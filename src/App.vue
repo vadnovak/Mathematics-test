@@ -33,7 +33,9 @@
       ></Answer>
 
       <ResultLevel v-else-if="appState === 'Result'"
+                   :countLevels="levels.length"
                    :currentLevel="currentLevel"
+                   :statusInLevel="statusInLevel"
                    @levelAfterEmit="nextLevel"
                    @finalRes="finalRes"
       ></ResultLevel>
@@ -61,9 +63,10 @@
         currentLevel: 0,          //текущий уровень
         appState: 'StartPage',    //выбор страници
         statAnswers: [],          //ответы пользователя
-        answerResult: 'test',     //ответ пользователя
+        answerResult: '',         //ответ пользователя
         answerInTheLevel: 0,      //ответ в уровне
         status: 0,                //количество правильных ответов
+        statusInLevel: 0,         //количество правильных ответов в уровне
         percent: 0,               //процент заполнения статусбара
         total: 0,                 //общее количество вопросов
         resLevel: true,           //if следующий вопрос
@@ -72,19 +75,19 @@
             answersCount: 2,      //количество вариантов ответов
             valueMin: 10,         //мин число для рандома
             valueMax: 99,         //макс число для рандома
-            questionsCount: 5,    //количество вопросов
+            questionsCount: 2,    //количество вопросов
           },
           {
-           answersCount: 3,
-           valueMin: 10,
-           valueMax: 200,
-           questionsCount: 3,
+            answersCount: 3,
+            valueMin: 10,
+            valueMax: 200,
+            questionsCount: 3,
           },
           {
-           answersCount: 3,
-           valueMin: 100,
-           valueMax: 500,
-           questionsCount: 3,
+            answersCount: 3,
+            valueMin: 100,
+            valueMax: 500,
+            questionsCount: 3,
           },
           {
             answersCount: 2,
@@ -105,7 +108,9 @@
       begin() {                               //переход на уровень
         this.appState = 'Level';
         this.currentLevel = 0;
+        this.statusInLevel = 0;
       },
+      
       appCorrect(val) {                       //получение варианта ответа true/false
         this.answerResult = val.correct;
 
@@ -117,55 +122,60 @@
           }
         );
         this.answerInTheLevel++;              //увеличение номера ответа в уровне
-        this.total++;
+        this.total++;                         //общее количество вопросов
         this.appState = 'Answer';             //переход на станицу с ответом
-
+          //заполнение прогрессбара
         this.percent = 100/this.levels[this.currentLevel].questionsCount;
         this.percent = this.percent*this.answerInTheLevel;
-        // this.classPercent();
+          /*    Подсчет правильных ответов в уровне    */
+        if (this.answerResult) {
+          this.statusInLevel++;
+        }
       },
-      nextLevel(){
+
+      nextLevel(){                        //следующий уровень
         this.appState = 'Level';
         this.answerInTheLevel = 0;        //обнуление ответ в уровне
         this.currentLevel++;              //следующий уровень
-        this.resLevel = true;
+        this.resLevel = true;             //переключение кнопки (следующий вопрос/уровень)
         this.percent = 0;                 //обнуление процнта в прогресбаре
-
+        this.statusInLevel = 0;           //обнуление правильных ответов в уровне
       },
+
       levelAfter(){
         this.appState = 'Level';
         if (this.answerInTheLevel === this.levels[this.currentLevel].questionsCount){
-          console.log(this.answerInTheLevel);
           this.appState = 'Result';
-        } else if (this.answerInTheLevel === this.levels[this.currentLevel].questionsCount - 1) {
+          /* правильные ответы в уровне */
+        } else if (this.answerInTheLevel === this.levels[this.currentLevel].questionsCount - 1) {     //
           this.resLevel = false;
-
-        };
+        }
       },
-      finalRes(){
+
+      finalRes(){                                 //Финальный результат
         this.appState = 'FinalResult';
         this.resultStatus();
       },
-      reStart(){
+
+      reStart(){                                  //Начать сначала
         this.appState = 'StartPage';
         this.total = 0;
         this.answerInTheLevel = 0;
+        this.percent = 0;
       },
-      addTimer(){
+
+      addTimer(){                                 //компонент с таймером (на будущее)
         this.appState = 'TimerTime';
       },
+
       resultStatus(){                             //количество правильных ответов (общее)
         for (let i = 0; i < this.statAnswers.length; i++) {
           if (this.statAnswers[i].correct) {
             this.status++;
-            console.log(this.status);
           }
         }
       },
-
-    },
-
-
+    }
   }
 </script>
 

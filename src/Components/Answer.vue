@@ -16,13 +16,11 @@
     props: ['answerResult', 'resLevel'],
     data () {
       return {
-
       }
     },
     methods: {
       nextAnswerBut(){
         this.$emit('nextAnswer');
-
       }
     }
   }

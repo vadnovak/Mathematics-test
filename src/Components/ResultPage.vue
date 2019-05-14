@@ -1,9 +1,9 @@
 <template>
   <div class="content">
     <h2>Результат {{currentLevel + 1}} уровня</h2>
-    <h3>Правильных ответов: </h3>
+    <h3>Правильных ответов: {{statusInLevel}}</h3>
     <div class="buttons">
-      <button @click="levelAfter">Следующий уровень</button>
+      <button v-if="countLevels > currentLevel + 1" @click="levelAfter">Следующий уровень</button>
       <button @click="finalRes">Закончить</button>
     </div>
   </div>
@@ -12,10 +12,9 @@
 
 <script>
   export default {
-    props: ['currentLevel'],
+    props: ['currentLevel', 'statusInLevel','countLevels'],
     data () {
       return {
-
       }
     },
     methods:{
